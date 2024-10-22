@@ -1,0 +1,4 @@
+seldon-core
+torch
+transformers
+numpy
