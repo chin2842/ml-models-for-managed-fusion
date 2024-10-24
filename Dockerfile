@@ -1,11 +1,13 @@
 # Use a slim Python 3.9 image
 FROM python:3.9-slim
 
-# Copy the entire application into /app
-COPY . /app
+# Set working directory
 WORKDIR /app
 
-# Set up cache directory
+# Copy the application files into /app
+COPY . /app
+
+# Set up cache directory and change ownership
 RUN mkdir -p /app/cache && \
     chown -R 8888 /app/cache
 
@@ -17,11 +19,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Define environment variables
-ENV HF_HOME="/app/cache"  # Updated environment variable
-ENV TRANSFORMERS_CACHE="/app/cache"  # Set this to a writable cache directory
-ENV MODEL_NAME mini  # Match this to the class name
-ENV SERVICE_TYPE MODEL
-ENV PERSISTENCE 0
+ENV HF_HOME="/app/cache"
+ENV TRANSFORMERS_CACHE="/app/cache"
+ENV MODEL_NAME="mini"
+ENV SERVICE_TYPE="MODEL"
+ENV PERSISTENCE="0"
 
 # Change ownership of the /app directory
 RUN chown -R 8888 /app
