@@ -6,13 +6,16 @@ from typing import Iterable
 import numpy as np
 import torch
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
 # Set the cache directory to a writable path
 os.environ["HF_HOME"] = "/app/cache"
 
-log = logging.getLogger()
-
 class mini:
     def __init__(self):
+        log.info("Loading tokenizer and model...")
         self.tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
         self.model = AutoModel.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
@@ -23,16 +26,20 @@ class mini:
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     def predict(self, X: np.ndarray, names=None, **kwargs):
-        model_input = dict(zip(names, X))
-        text = model_input["text"]
+        try:
+            model_input = dict(zip(names, X))
+            text = model_input["text"]
 
-        with torch.inference_mode():
-            encoded_input = self.tokenizer(text, padding=True, truncation=True, return_tensors='pt')
-            model_output = self.model(**encoded_input)
-            sentence_embeddings = self.mean_pooling(model_output, encoded_input['attention_mask'])
-            sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=-1)
-            final = [sentence_embeddings.squeeze().cpu().detach().numpy().tolist()]
-        return final
+            with torch.inference_mode():
+                encoded_input = self.tokenizer(text, padding=True, truncation=True, return_tensors='pt')
+                model_output = self.model(**encoded_input)
+                sentence_embeddings = self.mean_pooling(model_output, encoded_input['attention_mask'])
+                sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=-1)
+                final = [sentence_embeddings.squeeze().cpu().detach().numpy().tolist()]
+            return final
+        except Exception as e:
+            log.error(f"Prediction error: {str(e)}")
+            return [None]
 
     def class_names(self) -> Iterable[str]:
         return ["vector"]
