@@ -1,27 +1,30 @@
-# Use the slim version of Python
+# Use a slim Python 3.9 image
 FROM python:3.9-slim
 
-# Set the working directory
+# Copy the entire application into /app
+COPY . /app
 WORKDIR /app
 
-# Copy the necessary files
-COPY mini.py /app/mini.py
-COPY requirements.txt /app/requirements.txt
+# Set up cache directory
+RUN mkdir -p /.cache/huggingface/hub && \
+    chown -R 8888 /.cache
 
-# Install dependencies
+# Install the requirements
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Set environment variables for Seldon Core
-ENV MODEL_NAME mini
+# Expose the required port
+EXPOSE 5000
+
+# Define environment variables
+ENV TRANSFORMERS_CACHE="/.cache/huggingface/hub"
+ENV MODEL_NAME mini  # Match this to the class name
+ENV APP_MODULE mini:mini  # Correct reference to the module and class
 ENV SERVICE_TYPE MODEL
 ENV PERSISTENCE 0
 
-# Set APP_FILE and APP_MODULE
-ENV APP_FILE mini.py  # Specify the main file
-ENV APP_MODULE mini:App  # Specify the module and the callable class
+# Change ownership of the /app directory
+RUN chown -R 8888 /app
 
-# Expose the necessary port
-EXPOSE 5000
-
-# Command to run the Seldon Core microservice
-CMD ["sh", "-c", "seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE --persistence $PERSISTENCE"]
+# Command to start the Seldon microservice
+CMD ["seldon-core-microservice", "$MODEL_NAME", "--service-type", "$SERVICE_TYPE", "--persistence", "$PERSISTENCE"]

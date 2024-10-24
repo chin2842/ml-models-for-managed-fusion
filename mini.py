@@ -8,7 +8,7 @@ import torch
 
 log = logging.getLogger()
 
-class App():  # Class renamed to match the entry point
+class mini:  # Renamed back to mini
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
         self.model = AutoModel.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
@@ -35,4 +35,4 @@ class App():  # Class renamed to match the entry point
         return ["vector"]
 
 if __name__ == "__main__":
-    model = App()  # Instantiate the class
+    model = mini()  # Instantiate the class
