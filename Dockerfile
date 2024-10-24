@@ -22,11 +22,11 @@ RUN chown -R 8888 /app
 EXPOSE 5000
 
 # Define environment variables
-ENV HF_HOME="/app/cache"
-ENV MODEL_NAME="mini"  # Match this to the class name
-ENV APP_MODULE="mini:mini"  # Correct reference to the module and class
-ENV SERVICE_TYPE="MODEL"
-ENV PERSISTENCE="0"
+ENV HF_HOME=/app/cache \
+    MODEL_NAME=mini \
+    APP_MODULE=mini:mini \
+    SERVICE_TYPE=MODEL \
+    PERSISTENCE=0
 
 # Command to start the Seldon microservice
-CMD ["sh", "-c", "seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE --persistence $PERSISTENCE"]
+CMD ["seldon-core-microservice", "mini", "--service-type", "MODEL", "--persistence", "0"]
