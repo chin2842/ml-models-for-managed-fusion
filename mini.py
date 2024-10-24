@@ -6,9 +6,12 @@ from typing import Iterable
 import numpy as np
 import torch
 
+# Set the cache directory to a writable path
+os.environ["HF_HOME"] = "/app/cache"
+
 log = logging.getLogger()
 
-class mini:  # Renamed back to mini
+class mini:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
         self.model = AutoModel.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')

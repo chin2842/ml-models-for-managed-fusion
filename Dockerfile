@@ -6,8 +6,8 @@ COPY . /app
 WORKDIR /app
 
 # Set up cache directory
-RUN mkdir -p /.cache/huggingface/hub && \
-    chown -R 8888 /.cache
+RUN mkdir -p /app/cache && \
+    chown -R 8888 /app/cache
 
 # Install the requirements
 COPY requirements.txt requirements.txt
@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Define environment variables
-ENV TRANSFORMERS_CACHE="/.cache/huggingface/hub"
+ENV HF_HOME="/app/cache"  # Updated environment variable
 ENV MODEL_NAME mini  # Match this to the class name
 ENV APP_MODULE mini:mini  # Correct reference to the module and class
 ENV SERVICE_TYPE MODEL
@@ -27,4 +27,4 @@ ENV PERSISTENCE 0
 RUN chown -R 8888 /app
 
 # Command to start the Seldon microservice
-CMD ["seldon-core-microservice", "$MODEL_NAME", "--service-type", "$SERVICE_TYPE", "--persistence", "$PERSISTENCE"]
+CMD ["sh", "-c", "seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE --persistence $PERSISTENCE"]
