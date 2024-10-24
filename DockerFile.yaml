@@ -1,25 +1,27 @@
-# Use a slim Python 3.9 image
+# Use the slim version of Python
 FROM python:3.9-slim
 
-# Copy the entire application into /app
-COPY . /app
+# Set the working directory
 WORKDIR /app
 
-# Install the requirements
-COPY requirements.txt requirements.txt
+# Copy the necessary files
+COPY mini.py /app/mini.py
+COPY requirements.txt /app/requirements.txt
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the required port
-EXPOSE 5000
-
-# Define environment variables
+# Set environment variables for Seldon Core
 ENV MODEL_NAME mini
-ENV APP_MODULE mini
 ENV SERVICE_TYPE MODEL
 ENV PERSISTENCE 0
 
-# Change ownership of the /app directory
-RUN chown -R 8888 /app
+# Set APP_FILE and APP_MODULE
+ENV APP_FILE mini.py  # Specify the main file
+ENV APP_MODULE mini:App  # Specify the module and the callable class
 
-# Command to start the Seldon microservice
-CMD ["seldon-core-microservice", "$MODEL_NAME", "--service-type", "$SERVICE_TYPE", "--persistence", "$PERSISTENCE"]
+# Expose the necessary port
+EXPOSE 5000
+
+# Command to run the Seldon Core microservice
+CMD ["sh", "-c", "seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE --persistence $PERSISTENCE"]
