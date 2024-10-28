@@ -1,4 +1,4 @@
-seldon-core
-torch
-transformers
-numpy
+seldon-core==1.13.0
+torch==1.12.1
+transformers==4.11.3
+numpy==1.21.2
