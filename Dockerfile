@@ -26,4 +26,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Command to start the Seldon microservice
-CMD ["sh", "-c", "seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE --persistence $PERSISTENCE"]
+CMD exec seldon-core-microservice $MODEL_NAME --service-type $SERVICE_TYPE
