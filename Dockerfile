@@ -20,6 +20,7 @@ RUN chown appuser:appuser /app/requirements.txt
 
 # Install dependencies as the dedicated user
 USER appuser
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the required port
